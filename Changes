@@ -1,0 +1,6 @@
+Revision history for Perl extension Log::Lite.
+
+0.01  Thu Aug 18 18:06:22 2011
+	- original version; created by h2xs 1.23 with options
+		-XA -n Log::Lite
+

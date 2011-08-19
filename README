@@ -1,0 +1,22 @@
+Log-Lite version 0.01
+========================
+
+This module helps log information on disk.
+1. auto create a file named by the first argument when call the sub fisrt time.
+2. auto cut log file everyday.
+3. thread safety.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+COPYRIGHT AND LICENCE
+
+Copyright (c) 2011 ChenGang.
+This library is free software; you can redistribute it and/or 
+modify it under the same terms as Perl itself.
