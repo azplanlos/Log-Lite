@@ -1,10 +1,16 @@
 use Test::More tests => 2;
 BEGIN { use_ok('Log::Lite') };
 
-use Log::Lite qw(log);
+use POSIX qw(strftime);
+use Log::Lite qw(logpath log);
+
+my $logpath;
+$logpath = 'log';
+$logpath = '/tmp' if -d '/tmp';
+logpath($logpath);
 log('test', '123456789', 'abcdefg');
-my @files = glob("log/*");
-my $file = shift @files;
+my $date_str = strftime "%Y%m%d", localtime;
+my $file = "$logpath/test_$date_str".".log";
 open my $fh,"<",$file;
 my $content = <$fh>;
 close $fh;

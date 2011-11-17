@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Log-Lite
-version:             0.01
+version:             0.02
 abstract:            log info in local file
 license:             ~
 author:              

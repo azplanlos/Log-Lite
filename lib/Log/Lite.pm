@@ -3,13 +3,24 @@ use strict;
 use warnings;
 use POSIX qw(strftime);
 use Fcntl qw(:flock);
-use vars qw(@ISA @EXPORT_OK $VERSION);
 
 require Exporter;
-@ISA = qw(Exporter);
-@EXPORT_OK = qw(log);
+our @ISA = qw(Exporter);
+our @EXPORT_OK = qw(logpath log);
+our $VERSION = '0.02';
+our $LOGPATH;
 
-our $VERSION = '0.01';
+sub logpath
+{
+	my $path = shift;
+	if (substr($path, 0, 1) ne '/')
+	{
+		$path = $ENV{'PWD'} ."/". $path;
+	}
+
+	$LOGPATH = $path; 
+	return 1;
+}
 
 sub log
 {
@@ -25,14 +36,16 @@ sub log
     }
     $log .= "\n";
 
-    mkdir "log",0755 unless -d "log";
-    my $logfile = "log/".$logtype."_".$date_str.".log";
+    my $logpath = $LOGPATH ? $LOGPATH : 'log';
+    my $logfile = $logpath."/".$logtype."_".$date_str.".log";
+    mkdir $logpath,0755 unless -d $logpath;
 
     open my $fh,">>",$logfile;
     flock $fh,LOCK_EX;
     print $fh $log;
     flock $fh,LOCK_UN;
     close $fh;
+	return 1;
 }
 
 1;
@@ -46,6 +59,10 @@ Log::Lite - log info in local file
 =head1 SYNOPSIS
 
   use Log::Lite qw(log);
+
+  logpath("/tmp/mylogpath"); #defined where log files stored (Optional)
+  logpath("mylogpath"); #can use relative path (Optional)
+
   log("access", "user1", "ip1", "script"); #log in ./log/access_20110206.log
   log("access", "user2", "ip2", "script");  #log in the same file as above 
   log("debug", "some", "debug", "info", "in", "code"); #log in ./log/debug_20110206.log
@@ -54,13 +71,24 @@ Log::Lite - log info in local file
 
 =head1 DESCRIPTION
 
-This module helps log information on disk.
+Module Feature:
 
 1. auto create a file named by the first argument when call the sub fisrt time.
 
 2. auto cut log file everyday.
 
-3. thread safety.
+3. thread safety (open-lock-write-unlock-close everytime).
+
+
+=head1 METHODS
+
+=head2 logpath($path)
+
+Optional. Defined logpath. "./log" by default.
+
+=head2 log($type, $content, ...)
+
+Write information to file.
 
 
 =head1 AUTHOR
