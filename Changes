@@ -5,3 +5,5 @@ Revision history for Perl extension Log::Lite.
 		-XA -n Log::Lite
 0.02  Thu Nov 17 12:00:18 2011
 	- add logpath() to defined logpath
+0.03  Fri Nov 18 11:37:38 2011
+	- fix document

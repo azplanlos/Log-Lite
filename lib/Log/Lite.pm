@@ -7,7 +7,7 @@ use Fcntl qw(:flock);
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(logpath log);
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our $LOGPATH;
 
 sub logpath
@@ -53,12 +53,12 @@ __END__
 
 =head1 NAME
 
-Log::Lite - log info in local file
+Log::Lite - Log info in local file
 
 
 =head1 SYNOPSIS
 
-  use Log::Lite qw(log);
+  use Log::Lite qw(logpath log);
 
   logpath("/tmp/mylogpath"); #defined where log files stored (Optional)
   logpath("mylogpath"); #can use relative path (Optional)
@@ -73,7 +73,7 @@ Log::Lite - log info in local file
 
 Module Feature:
 
-1. auto create a file named by the first argument when call the sub fisrt time.
+1. auto create file named by the first argument.
 
 2. auto cut log file everyday.
 
@@ -86,7 +86,7 @@ Module Feature:
 
 Optional. Defined logpath. "./log" by default.
 
-=head2 log($type, $content, ...)
+=head2 log($type, $content1, $content2, $content3, ...)
 
 Write information to file.
 

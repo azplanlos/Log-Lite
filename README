@@ -1,10 +1,11 @@
-Log-Lite version 0.02
+Log-Lite version 0.03
 ========================
 
 This module helps log information on disk.
-1. auto create a file named by the first argument when call the sub fisrt time.
+Main feature:
+1. auto create file named by the first argument.
 2. auto cut log file everyday.
-3. thread safety.
+3. thread safety (open-lock-write-unlock-close everytime).
 
 INSTALLATION
 
