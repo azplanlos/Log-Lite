@@ -1,13 +1,21 @@
---- #YAML:1.0
-name:                Log-Lite
-version:             0.03
-abstract:            Log info in local file
-license:             ~
-author:              
-    - 陈 钢 <yikuyiku.com@gmail.com>
-generated_by:        ExtUtils::MakeMaker version 6.42
-distribution_type:   module
-requires:     
+---
+abstract: 'Log info in local file'
+author:
+  - '陈 钢 <yikuyiku.com@gmail.com>'
+build_requires:
+  ExtUtils::MakeMaker: 0
+configure_requires:
+  ExtUtils::MakeMaker: 0
+dynamic_config: 1
+generated_by: 'ExtUtils::MakeMaker version 6.59, CPAN::Meta::Converter version 2.112621'
+license: unknown
 meta-spec:
-    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
-    version: 1.3
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Log-Lite
+no_index:
+  directory:
+    - t
+    - inc
+requires: {}
+version: 0.04

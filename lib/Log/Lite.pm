@@ -7,7 +7,7 @@ use Fcntl qw(:flock);
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(logpath log);
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our $LOGPATH;
 
 sub logpath
@@ -31,8 +31,8 @@ sub log
     foreach (@_) 
     {
         my $str = $_;
-        $str =~ s/[\t\r\n]//g;
-        $log .= "\t".$str;
+        $str =~ s/[\t\r\n]//g if defined $str;
+        $log .= "\t".$str if defined $str;
     }
     $log .= "\n";
 
