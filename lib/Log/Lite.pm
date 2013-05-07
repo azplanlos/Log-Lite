@@ -5,47 +5,47 @@ use POSIX qw(strftime);
 use Fcntl qw(:flock);
 
 require Exporter;
-our @ISA = qw(Exporter);
+our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(logpath log);
-our $VERSION = '0.04';
+our $VERSION   = '0.05';
 our $LOGPATH;
 
-sub logpath
-{
-	my $path = shift;
-	if (substr($path, 0, 1) ne '/')
-	{
-		$path = $ENV{'PWD'} ."/". $path;
-	}
+sub logpath {
+    my $path = shift;
+    if ( substr( $path, 0, 1 ) ne '/' ) {
+        $path = $ENV{'PWD'} . "/" . $path;
+    }
 
-	$LOGPATH = $path; 
-	return 1;
+    $LOGPATH = $path;
+    return 1;
 }
 
-sub log
-{
+sub log {
     return 0 unless $_[0];
-    my $logtype = shift;
+    my $logtype  = shift;
     my $date_str = strftime "%Y%m%d", localtime;
-    my $log = strftime "%Y-%m-%d %H:%M:%S", localtime;
-    foreach (@_) 
-    {
+    my $log      = strftime "%Y-%m-%d %H:%M:%S", localtime;
+    foreach (@_) {
         my $str = $_;
         $str =~ s/[\t\r\n]//g if defined $str;
-        $log .= "\t".$str if defined $str;
+        $log .= "\t" . $str if defined $str;
     }
     $log .= "\n";
 
     my $logpath = $LOGPATH ? $LOGPATH : 'log';
-    my $logfile = $logpath."/".$logtype."_".$date_str.".log";
-    mkdir $logpath,0755 unless -d $logpath;
-
-    open my $fh,">>",$logfile;
-    flock $fh,LOCK_EX;
-    print $fh $log;
-    flock $fh,LOCK_UN;
-    close $fh;
-	return 1;
+    my $logfile = $logpath . "/" . $logtype . "_" . $date_str . ".log";
+    if ( -d $logpath or mkdir $logpath, 0755 ) {
+        open my $fh, ">>", $logfile;
+        flock $fh, LOCK_EX;
+        print $fh $log;
+        flock $fh, LOCK_UN;
+        close $fh;
+        return 1;
+    }
+    else {
+        print STDERR "error mkdir $logpath";
+        return 0;
+    }
 }
 
 1;
