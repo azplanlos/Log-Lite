@@ -6,9 +6,18 @@ use Fcntl qw(:flock);
 
 require Exporter;
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(logpath log);
-our $VERSION   = '0.05';
+our @EXPORT_OK = qw(logmode logpath log);
+our $VERSION   = '0.06';
 our $LOGPATH;
+our $LOGMODE = 'log'; # or debug
+
+sub logmode {
+    my $mode = shift;
+    if ( $mode eq 'debug' or $mode eq 'log' ) {
+		$LOGMODE = $mode;
+    }
+    return 1;
+}
 
 sub logpath {
     my $path = shift;
@@ -31,6 +40,12 @@ sub log {
         $log .= "\t" . $str if defined $str;
     }
     $log .= "\n";
+
+	if ($LOGMODE eq 'debug')
+	{
+		print STDERR $log;
+		return 1;
+	}
 
     my $logpath = $LOGPATH ? $LOGPATH : 'log';
     my $logfile = $logpath . "/" . $logtype . "_" . $date_str . ".log";
@@ -60,6 +75,9 @@ Log::Lite - Log info in local file
 
   use Log::Lite qw(logpath log);
 
+  logmode("log"); #log in file (Default)
+  logmode("debug"); #output to STDERR
+
   logpath("/tmp/mylogpath"); #defined where log files stored (Optional)
   logpath("mylogpath"); #can use relative path (Optional)
 
@@ -79,8 +97,17 @@ Module Feature:
 
 3. thread safety (open-lock-write-unlock-close everytime).
 
+4. support debug mode.
+
 
 =head1 METHODS
+
+=head2 logpath($path)
+
+Optional. 
+"debug" -- print to STDERR
+"log"   -- log in file
+"log" by default.
 
 =head2 logpath($path)
 

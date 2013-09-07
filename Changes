@@ -11,3 +11,5 @@ Revision history for Perl extension Log::Lite.
     - fix warnings
 0.05  Tue May  7 22:04:53 2013
     - report error when fail to create logpath
+0.06  Sat Sep  7 13:50:42 2013
+    - debug mode support
