@@ -1,10 +1,10 @@
-Log-Lite version 0.07
+Log-Lite version 0.08
 ========================
 
 This module helps log information on disk.
 Main feature:
 1. auto create file named by the first argument.
-2. auto cut log file everyday.
+2. support auto cut log file everyday,everymonth,everyyear.
 3. thread safety (open-lock-write-unlock-close everytime).
 4. log|debug|slient mode support
 

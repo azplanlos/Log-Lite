@@ -7,9 +7,17 @@ use Fcntl qw(:flock);
 require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(logmode logpath log);
-our $VERSION   = '0.07';
+our $VERSION   = '0.08';
 our $LOGPATH;
 our $LOGMODE = 'log'; # or debug|slient
+our $LOGROTATE = 'day'; # or month|year|no
+
+sub logrotate {
+	my $rotate = shift;
+    if ( $rotate eq 'day' or $rotate eq 'month' or $rotate eq 'year' or $rotate eq 'no' ) {
+		$LOGROTATE = $rotate;
+    }
+}
 
 sub logmode {
     my $mode = shift;
@@ -32,7 +40,6 @@ sub logpath {
 sub log {
     return 0 unless $_[0];
     my $logtype  = shift;
-    my $date_str = strftime "%Y%m%d", localtime;
     my $log      = strftime "%Y-%m-%d %H:%M:%S", localtime;
     foreach (@_) {
         my $str = $_;
@@ -51,7 +58,24 @@ sub log {
 	}
 
     my $logpath = $LOGPATH ? $LOGPATH : 'log';
-    my $logfile = $logpath . "/" . $logtype . "_" . $date_str . ".log";
+    my $date_str = '';
+	if ($LOGROTATE ne 'no')
+	{
+		$date_str .= '_';
+		if ($LOGROTATE eq 'day')
+		{
+			$date_str .= strftime "%Y%m%d", localtime;
+		}
+		elsif ($LOGROTATE eq 'month')
+		{
+			$date_str .= strftime "%Y%m", localtime;
+		}
+		elsif ($LOGROTATE eq 'year')
+		{
+			$date_str .= strftime "%Y", localtime;
+		}
+	}
+    my $logfile = $logpath . "/" . $logtype . $date_str . ".log";
     if ( -d $logpath or mkdir $logpath, 0755 ) {
         open my $fh, ">>", $logfile;
         flock $fh, LOCK_EX;
@@ -76,14 +100,19 @@ Log::Lite - Log info in local file
 
 =head1 SYNOPSIS
 
-  use Log::Lite qw(logmode logpath log);
+  use Log::Lite qw(logrotate logmode logpath log);
+
+  logrotate("day");		#autocut logfile every day (Default)
+  logrotate("month");		#autocut logfile every month 
+  logrotate("year");		#autocut logfile every year 
+  logrotate("no");		#disable autocut
 
   logmode("log");		#log in file (Default)
   logmode("debug");		#output to STDERR
-  logmode("slient");	#do nothing
+  logmode("slient");		#do nothing
 
-  logpath("/tmp/mylogpath"); #defined where log files stored (Optional)
-  logpath("mylogpath"); #can use relative path (Optional)
+  logpath("/tmp/mylogpath");	#defined where log files stored (Optional)
+  logpath("mylogpath");			#relative path is ok
 
   log("access", "user1", "ip1", "script"); #log in ./log/access_20110206.log
   log("access", "user2", "ip2", "script");  #log in the same file as above 
@@ -97,7 +126,7 @@ Module Feature:
 
 1. auto create file named by the first argument.
 
-2. auto cut log file everyday.
+2. support auto cut log file everyday,everymonth,everyyear.
 
 3. thread safety (open-lock-write-unlock-close everytime).
 
@@ -106,21 +135,44 @@ Module Feature:
 
 =head1 METHODS
 
+=head2 logrotate($rotate_mode)
+
+Optional. 
+
+"day"   	: auto cut log file every day
+
+"month"   	: auto cut log file every month
+
+"year"   	: auto cut log file every year
+
+"day" by default.
+
+
+=head2 logmode($mode)
+
+Optional. 
+
+"log"   	: log in file
+
+"debug" 	: print to STDERR
+
+"slient"	: do nothing
+
+"log" by default.
+
+
 =head2 logpath($path)
 
 Optional. 
-"log"   	: log in file
-"debug" 	: print to STDERR
-"slient"	: do nothing
-"log" by default.
 
-=head2 logpath($path)
+Defined logpath. "./log" by default.
 
-Optional. Defined logpath. "./log" by default.
 
 =head2 log($type, $content1, $content2, $content3, ...)
 
-Write information to file.
+Main function.
+
+Log things.
 
 
 =head1 AUTHOR
