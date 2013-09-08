@@ -7,7 +7,7 @@ use Fcntl qw(:flock);
 require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(logmode logpath log);
-our $VERSION   = '0.08';
+our $VERSION   = '0.09';
 our $LOGPATH;
 our $LOGMODE = 'log'; # or debug|slient
 our $LOGROTATE = 'day'; # or month|year|no
@@ -17,6 +17,7 @@ sub logrotate {
     if ( $rotate eq 'day' or $rotate eq 'month' or $rotate eq 'year' or $rotate eq 'no' ) {
 		$LOGROTATE = $rotate;
     }
+	return 1;
 }
 
 sub logmode {
@@ -102,6 +103,7 @@ Log::Lite - Log info in local file
 
   use Log::Lite qw(logrotate logmode logpath log);
 
+  # Optional methods
   logrotate("day");		#autocut logfile every day (Default)
   logrotate("month");		#autocut logfile every month 
   logrotate("year");		#autocut logfile every year 
@@ -111,9 +113,10 @@ Log::Lite - Log info in local file
   logmode("debug");		#output to STDERR
   logmode("slient");		#do nothing
 
-  logpath("/tmp/mylogpath");	#defined where log files stored (Optional)
-  logpath("mylogpath");			#relative path is ok
+  logpath("/tmp/mylogpath");	#defined where log files stored
+  logpath("mylogpath");		#relative path is ok
 
+  # Main method
   log("access", "user1", "ip1", "script"); #log in ./log/access_20110206.log
   log("access", "user2", "ip2", "script");  #log in the same file as above 
   log("debug", "some", "debug", "info", "in", "code"); #log in ./log/debug_20110206.log
@@ -139,11 +142,11 @@ Module Feature:
 
 Optional. 
 
-"day"   	: auto cut log file every day
+"day"	: auto cut log file every day
 
-"month"   	: auto cut log file every month
+"month"	: auto cut log file every month
 
-"year"   	: auto cut log file every year
+"year"	: auto cut log file every year
 
 "day" by default.
 
@@ -170,7 +173,7 @@ Defined logpath. "./log" by default.
 
 =head2 log($type, $content1, $content2, $content3, ...)
 
-Main function.
+Main method.
 
 Log things.
 
