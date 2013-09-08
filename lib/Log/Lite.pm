@@ -6,8 +6,8 @@ use Fcntl qw(:flock);
 
 require Exporter;
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(logmode logpath log);
-our $VERSION   = '0.09';
+our @EXPORT_OK = qw(logrotate logmode logpath log);
+our $VERSION   = '0.10';
 our $LOGPATH;
 our $LOGMODE = 'log'; # or debug|slient
 our $LOGROTATE = 'day'; # or month|year|no

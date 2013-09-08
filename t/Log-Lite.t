@@ -2,7 +2,7 @@ use Test::More tests => 2;
 BEGIN { use_ok('Log::Lite') };
 
 use POSIX qw(strftime);
-use Log::Lite qw(logpath log);
+use Log::Lite qw(logrotate logmode logpath log);
 
 my $logpath;
 $logpath = 'log';
