@@ -7,9 +7,9 @@ use Fcntl qw(:flock);
 require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(logmode logpath log);
-our $VERSION   = '0.06';
+our $VERSION   = '0.07';
 our $LOGPATH;
-our $LOGMODE = 'log'; # or debug
+our $LOGMODE = 'log'; # or debug|slient
 
 sub logmode {
     my $mode = shift;
@@ -41,8 +41,11 @@ sub log {
     }
     $log .= "\n";
 
-	if ($LOGMODE eq 'debug')
-	{
+	if ($LOGMODE eq 'slient') {
+		return 1;
+	}
+
+	if ($LOGMODE eq 'debug') {
 		print STDERR $log;
 		return 1;
 	}
@@ -73,10 +76,11 @@ Log::Lite - Log info in local file
 
 =head1 SYNOPSIS
 
-  use Log::Lite qw(logpath log);
+  use Log::Lite qw(logmode logpath log);
 
-  logmode("log"); #log in file (Default)
-  logmode("debug"); #output to STDERR
+  logmode("log");		#log in file (Default)
+  logmode("debug");		#output to STDERR
+  logmode("slient");	#do nothing
 
   logpath("/tmp/mylogpath"); #defined where log files stored (Optional)
   logpath("mylogpath"); #can use relative path (Optional)
@@ -97,7 +101,7 @@ Module Feature:
 
 3. thread safety (open-lock-write-unlock-close everytime).
 
-4. support debug mode.
+4. support log/debug/slient mode.
 
 
 =head1 METHODS
@@ -105,8 +109,9 @@ Module Feature:
 =head2 logpath($path)
 
 Optional. 
-"debug" -- print to STDERR
-"log"   -- log in file
+"log"   	: log in file
+"debug" 	: print to STDERR
+"slient"	: do nothing
 "log" by default.
 
 =head2 logpath($path)

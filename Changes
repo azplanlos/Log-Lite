@@ -13,3 +13,6 @@ Revision history for Perl extension Log::Lite.
     - report error when fail to create logpath
 0.06  Sat Sep  7 13:50:42 2013
     - debug mode support
+0.07  Sun Sep  8 11:33:51 2013
+    - slient mode support
+
