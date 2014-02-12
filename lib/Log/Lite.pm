@@ -7,7 +7,7 @@ use Fcntl qw(:flock);
 require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(logrotate logmode logpath log);
-our $VERSION   = '0.10';
+our $VERSION   = '0.11';
 our $LOGPATH;
 our $LOGMODE = 'log'; # or debug|slient
 our $LOGROTATE = 'day'; # or month|year|no
@@ -54,7 +54,7 @@ sub log {
 	}
 
 	if ($LOGMODE eq 'debug') {
-		print STDERR $log;
+		print STDERR "[Log::Lite]$log";
 		return 1;
 	}
 
@@ -77,7 +77,7 @@ sub log {
 		}
 	}
     my $logfile = $logpath . "/" . $logtype . $date_str . ".log";
-    if ( -d $logpath or mkdir $logpath, 0755 ) {
+    if ( -d $logpath or make_path($logpath, { verbose => 0, mode => 0755}) ) {
         open my $fh, ">>", $logfile;
         flock $fh, LOCK_EX;
         print $fh $log;
@@ -86,7 +86,7 @@ sub log {
         return 1;
     }
     else {
-        print STDERR "error mkdir $logpath";
+        print STDERR "[Log::Lite]error mkdir $logpath";
         return 0;
     }
 }
