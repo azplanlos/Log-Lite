@@ -8,5 +8,5 @@ WriteMakefile(
                          }, 
     ($] >= 5.005 ?     
       (ABSTRACT_FROM  => 'lib/Log/Lite.pm', 
-       AUTHOR         => '陈 钢 <yikuyiku.com@gmail.com>') : ()),
+       AUTHOR         => 'Chen Gang <yikuyiku.com@gmail.com>') : ()),
 );

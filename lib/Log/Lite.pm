@@ -3,34 +3,44 @@ use strict;
 use warnings;
 use POSIX qw(strftime);
 use Fcntl qw(:flock);
+use File::Path qw(make_path);
 
 require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(logrotate logmode logpath log);
-our $VERSION   = '0.11';
+our $VERSION   = '0.12';
 our $LOGPATH;
-our $LOGMODE = 'log'; # or debug|slient
-our $LOGROTATE = 'day'; # or month|year|no
+our $LOGMODE   = 'log';    # or debug|slient
+our $LOGROTATE = 'day';    # or month|year|no
 
-sub logrotate {
-	my $rotate = shift;
-    if ( $rotate eq 'day' or $rotate eq 'month' or $rotate eq 'year' or $rotate eq 'no' ) {
-		$LOGROTATE = $rotate;
-    }
-	return 1;
-}
-
-sub logmode {
-    my $mode = shift;
-    if ( $mode eq 'debug' or $mode eq 'log' ) {
-		$LOGMODE = $mode;
+sub logrotate
+{
+    my $rotate = shift;
+    if (   $rotate eq 'day'
+        or $rotate eq 'month'
+        or $rotate eq 'year'
+        or $rotate eq 'no')
+    {
+        $LOGROTATE = $rotate;
     }
     return 1;
 }
 
-sub logpath {
+sub logmode
+{
+    my $mode = shift;
+    if ($mode eq 'debug' or $mode eq 'log')
+    {
+        $LOGMODE = $mode;
+    }
+    return 1;
+}
+
+sub logpath
+{
     my $path = shift;
-    if ( substr( $path, 0, 1 ) ne '/' ) {
+    if (substr($path, 0, 1) ne '/')
+    {
         $path = $ENV{'PWD'} . "/" . $path;
     }
 
@@ -38,46 +48,51 @@ sub logpath {
     return 1;
 }
 
-sub log {
+sub log
+{
     return 0 unless $_[0];
-    my $logtype  = shift;
-    my $log      = strftime "%Y-%m-%d %H:%M:%S", localtime;
-    foreach (@_) {
+    my $logtype = shift;
+    my $log = strftime "%Y-%m-%d %H:%M:%S", localtime;
+    foreach (@_)
+    {
         my $str = $_;
         $str =~ s/[\t\r\n]//g if defined $str;
         $log .= "\t" . $str if defined $str;
     }
     $log .= "\n";
 
-	if ($LOGMODE eq 'slient') {
-		return 1;
-	}
+    if ($LOGMODE eq 'slient')
+    {
+        return 1;
+    }
 
-	if ($LOGMODE eq 'debug') {
-		print STDERR "[Log::Lite]$log";
-		return 1;
-	}
+    if ($LOGMODE eq 'debug')
+    {
+        print STDERR "[Log::Lite]$log";
+        return 1;
+    }
 
     my $logpath = $LOGPATH ? $LOGPATH : 'log';
     my $date_str = '';
-	if ($LOGROTATE ne 'no')
-	{
-		$date_str .= '_';
-		if ($LOGROTATE eq 'day')
-		{
-			$date_str .= strftime "%Y%m%d", localtime;
-		}
-		elsif ($LOGROTATE eq 'month')
-		{
-			$date_str .= strftime "%Y%m", localtime;
-		}
-		elsif ($LOGROTATE eq 'year')
-		{
-			$date_str .= strftime "%Y", localtime;
-		}
-	}
+    if ($LOGROTATE ne 'no')
+    {
+        $date_str .= '_';
+        if ($LOGROTATE eq 'day')
+        {
+            $date_str .= strftime "%Y%m%d", localtime;
+        }
+        elsif ($LOGROTATE eq 'month')
+        {
+            $date_str .= strftime "%Y%m", localtime;
+        }
+        elsif ($LOGROTATE eq 'year')
+        {
+            $date_str .= strftime "%Y", localtime;
+        }
+    }
     my $logfile = $logpath . "/" . $logtype . $date_str . ".log";
-    if ( -d $logpath or make_path($logpath, { verbose => 0, mode => 0755}) ) {
+    if (-d $logpath or make_path($logpath, {verbose => 0, mode => 0755}))
+    {
         open my $fh, ">>", $logfile;
         flock $fh, LOCK_EX;
         print $fh $log;
@@ -85,7 +100,8 @@ sub log {
         close $fh;
         return 1;
     }
-    else {
+    else
+    {
         print STDERR "[Log::Lite]error mkdir $logpath";
         return 0;
     }

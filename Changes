@@ -23,4 +23,6 @@ Revision history for Perl extension Log::Lite.
 	- fix bug
 0.11  Wed Feb 12 15:51:25 2014
     - change mkdir to File::Path
+0.12  Thu Apr 10 19:49:43 2014
+    - fix bug
 
