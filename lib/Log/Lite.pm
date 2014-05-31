@@ -7,11 +7,19 @@ use File::Path qw(make_path);
 
 require Exporter;
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(logrotate logmode logpath log);
-our $VERSION   = '0.12';
+our @EXPORT_OK = qw(logrotate logmode logpath logsregex log);
+our $VERSION   = '0.13';
 our $LOGPATH;
 our $LOGMODE   = 'log';    # or debug|slient
 our $LOGROTATE = 'day';    # or month|year|no
+our $LOGSREGEX = "[\t\r\n]";
+
+sub logsregex
+{
+    my $regex = shift;
+	$LOGSREGEX = $regex;
+    return 1;
+}
 
 sub logrotate
 {
@@ -56,7 +64,7 @@ sub log
     foreach (@_)
     {
         my $str = $_;
-        $str =~ s/[\t\r\n]//g if defined $str;
+        $str =~ s/$LOGSREGEX//g if defined $str;
         $log .= "\t" . $str if defined $str;
     }
     $log .= "\n";
@@ -132,6 +140,8 @@ Log::Lite - Log info in local file
   logpath("/tmp/mylogpath");	#defined where log files stored
   logpath("mylogpath");		#relative path is ok
 
+  logsregex("stopword");		#set a regex use to remove words that you do not want to log. Default is [\r\n\t]
+
   # Main method
   log("access", "user1", "ip1", "script"); #log in ./log/access_20110206.log
   log("access", "user2", "ip2", "script");  #log in the same file as above 
@@ -178,6 +188,16 @@ Optional.
 "slient"	: do nothing
 
 "log" by default.
+
+
+=head2 logsregex($stopword_regex)
+
+Optional. Set a regex here.
+
+You can use this function to remove those the words you don't want to log.
+
+"[\r\n\t]" by default.
+
 
 
 =head2 logpath($path)
